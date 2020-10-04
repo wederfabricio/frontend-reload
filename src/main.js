@@ -8,10 +8,12 @@ import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
 import '@fortawesome/fontawesome-free/css/all.css'
 
-axios.defaults.baseURL = process.env.BASEURL;
+axios.defaults.baseURL = process.env.BASEURL + '/api';
 
 Vue.use(BootstrapVue)
 Vue.use(BootstrapVueIcons)
+
+Vue.prototype.$storageApi = process.env.BASEURL + '/storage';
 
 Vue.config.productionTip = false
 

@@ -5,12 +5,12 @@
     <div class="row">
         <div class="col col-12 col-md-9 segment">
             <div class="segment">
-                <input type="file" class="d-none">
-                <div class="files add-file">
+                <input ref="fileInput" multiple="" accept="image/jpeg, image/png" @change="fileChanged" type="file" class="d-none">
+                <div class="files add-file" @click="fileOpen">
                     <i class="fa fa-plus fa-lg"></i>
                 </div>
                 <div class="files" v-for="(file, i) in files" :key="i" :class="{ 'files no-file': file === '' }">
-                    
+                    <img v-if="file !== ''" :src="file" class="img-fluid" alt="Image">
                 </div>
             </div>
             <h4>Resume</h4>
@@ -89,6 +89,7 @@ export default {
         return {
             action: '',
             product: {},
+            filesAppended: [],
             files: Array(3).fill(''),
             options: [
                 { value: 1, text: 'YES' },
@@ -98,15 +99,40 @@ export default {
         }        
     },
     methods: {
+        fileOpen() {
+            let fileInput = this.$refs.fileInput;
+            fileInput.click();
+        },
+        fileChanged(event) {
+            let fileInput = this.$refs.fileInput;
+
+            for(let i = 0; i < fileInput.files.length; i++) {
+                this.filesAppended.push(event.target.files[i]);
+                let reader = new FileReader();
+                reader.readAsDataURL(event.target.files[i]);
+                reader.onload = () => {
+                    this.$set(this.files, i, reader.result);
+                }                
+            }
+        },
         doAction() {
+            let data = new FormData();
+
+            for(let key in this.product) {
+                data.append(key, this.product[key]);
+            }
+            for(let i = 0; i < this.filesAppended.length; i++) {
+                data.append('images[' + i + ']', this.filesAppended[i]);
+            }
+
             let params;
             if(this.action === 'updateProduct') {
                 params = {
-                    data: this.product,
+                    data: data,
                     id: this.product.id
                 };
             } else {
-                params = this.product;
+                params = data;
             }
 
             this.$store.dispatch(this.action, params).then(() => {
@@ -139,6 +165,10 @@ export default {
         
         this.action = 'updateProduct';
         this.$store.dispatch('getProductDetail', productId).then(product => {
+            this.files = product.images.map(i => {
+                return this.$storageApi + '/' + i.file_name
+            });
+            delete product.images;
             this.product = product;
         });
         
@@ -163,9 +193,12 @@ export default {
     .files {
         display: inline-block;
         border: 1px solid #ccc;
-        padding: 3em;
+        width: 98px;
+        height: 98px;
         margin-right: 0.5em;
         position: relative;
+        text-align: center;
+        overflow: hidden;
     }
     .segment h4 {
         margin: 0.5em 0;

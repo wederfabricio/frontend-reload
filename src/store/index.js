@@ -21,7 +21,11 @@ export default new Vuex.Store({
           return result.data;
       }),
     updateProduct: ({commit}, params) => 
-      axios.put('/product/' + params.id, params.data).then(result => {
+      axios.post('/product/' + params.id, params.data, {
+        headers: {
+          'Content-type': 'multipart/form-data'
+        }
+      }).then(result => {
           return result.data;
       }),
     deleteProduct: ({commit}, id) => 
@@ -29,7 +33,11 @@ export default new Vuex.Store({
           return result.data;
       }),
     saveProduct: ({commit}, data) => 
-      axios.post('/product', data).then(result => {
+      axios.post('/product', data, {
+        headers: {
+          'Content-type': 'multipart/form-data'
+        }
+      }).then(result => {
           return result.data;
       })
   },

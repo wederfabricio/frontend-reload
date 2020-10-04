@@ -26,6 +26,9 @@
           :fields="fields"
           hover 
         >
+          <template v-slot:cell(image)="row">
+              <img class="img-fluid" v-if="row.item.images.length > 0" :src="$storageApi + '/' + row.item.images[0].file_name" />
+          </template>
           <template v-slot:cell(active)="row">
             <div class="flex text-center active-icons">
               <span v-if="row.item.active == 1" class="active"></span>
