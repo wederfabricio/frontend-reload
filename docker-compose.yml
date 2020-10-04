@@ -5,7 +5,7 @@ services:
     image: node:10
     ports:
       - 8080:8080
-    command: bash -c "yarn install ; yarn install -g @vue/cli ; yarn serve"
+    command: bash -c "npm install ; npm install -g @vue/cli-init ; HOST=0.0.0.0 npm start"
     working_dir: /app
     volumes:
       - ./:/app
